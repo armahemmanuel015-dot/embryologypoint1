@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intro to Embryology — Bloom's Blitz</title>
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --bg: #f4f6fb;
+    --card-bg: #ffffff;
+    --text: #10131a;
+    --text-muted: #62697b;
+    --border: #e3e6ee;
+    --accent: #5b5ff0;
+    --accent-soft: #eceafe;
+    --correct: #16a34a;
+    --correct-soft: #dcfce7;
+    --incorrect: #dc2626;
+    --incorrect-soft: #fee2e2;
+    --remember: #3b82f6;
+    --understand: #06b6d4;
+    --apply: #16a34a;
+    --analyze: #d97706;
+    --evaluate: #9333ea;
+    --create: #e11d48;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1117;
+      --card-bg: #161b25;
+      --text: #eef1f7;
+      --text-muted: #97a0b5;
+      --border: #2a3140;
+      --accent-soft: #232244;
+      --correct-soft: #123821;
+      --incorrect-soft: #3a1418;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1117;
+    --card-bg: #161b25;
+    --text: #eef1f7;
+    --text-muted: #97a0b5;
+    --border: #2a3140;
+    --accent-soft: #232244;
+    --correct-soft: #123821;
+    --incorrect-soft: #3a1418;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  #app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(24px, env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .brand { text-align: center; padding: 6px 0 14px; }
+  .brand h1 { font-size: clamp(1.05rem, 5vw, 1.35rem); margin: 0 0 4px; letter-spacing: -0.01em; }
+  .brand p { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .start-list { text-align: left; margin: 16px 0 20px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .start-list li { display: flex; gap: 10px; font-size: 0.92rem; color: var(--text); align-items: flex-start; }
+  .start-list li .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 6px; }
+  .name-tag { color: var(--accent); font-weight: 700; }
+  button.primary-btn {
+    width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 14px;
+    padding: 15px; font-size: 1rem; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  button.primary-btn:active { opacity: 0.85; }
+  button.ghost-btn {
+    width: 100%; background: transparent; color: var(--accent); border: 1px solid var(--border);
+    border-radius: 14px; padding: 13px; font-size: 0.92rem; font-weight: 600; cursor: pointer; margin-top: 10px;
+  }
+  button.retry-btn {
+    width: 100%; background: var(--analyze); color: #fff; border: none; border-radius: 14px;
+    padding: 15px; font-size: 0.98rem; font-weight: 700; cursor: pointer; margin-bottom: 10px;
+  }
+  .topbar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .topbar-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+  .progress-track { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.25s ease; }
+  .timer-row { display: flex; align-items: center; gap: 8px; }
+  .timer-track { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .timer-fill { height: 100%; border-radius: 4px; transition: width 1s linear, background 0.3s ease; background: var(--apply); }
+  .timer-num { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 0.85rem; min-width: 30px; text-align: right; }
+  .badges { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .badge { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; color: #fff; }
+  .badge.topic { background: transparent; color: var(--text-muted); border: 1px solid var(--border); text-transform: none; font-weight: 600; letter-spacing: 0; }
+  .badge.retry-tag { background: var(--analyze); }
+  .qtext { font-size: 1.02rem; line-height: 1.45; font-weight: 650; margin: 0 0 16px; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option-btn {
+    text-align: left; border: 1.5px solid var(--border); background: var(--card-bg); color: var(--text);
+    border-radius: 13px; padding: 13px 14px; font-size: 0.92rem; line-height: 1.35;
+    display: flex; gap: 10px; align-items: flex-start; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .option-btn .letter {
+    flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 800; color: var(--text-muted);
+  }
+  .option-btn.correct { background: var(--correct-soft); border-color: var(--correct); }
+  .option-btn.correct .letter { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .option-btn.incorrect { background: var(--incorrect-soft); border-color: var(--incorrect); }
+  .option-btn.incorrect .letter { background: var(--incorrect); border-color: var(--incorrect); color: #fff; }
+  .option-btn.dim { opacity: 0.55; }
+  .feedback-line { margin-top: 14px; font-size: 0.82rem; font-weight: 700; text-align: center; min-height: 18px; }
+  .feedback-line.ok { color: var(--correct); }
+  .feedback-line.no { color: var(--incorrect); }
+  .score-hero { text-align: center; padding: 6px 0 4px; }
+  .score-hero .hero-label { font-weight: 700; color: var(--text-muted); font-size: 0.85rem; }
+  .score-hero .big { font-size: 3rem; font-weight: 800; line-height: 1; color: var(--accent); }
+  .score-hero .pct { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px 0; }
+  .stat-cell { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
+  .stat-cell .lvl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-cell .num { font-size: 1.1rem; font-weight: 800; margin-top: 2px; }
+  .review-title { font-size: 0.85rem; font-weight: 800; margin: 18px 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .review-item { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+  .review-item .rq { font-size: 0.88rem; font-weight: 650; margin-bottom: 6px; }
+  .review-item .ra { font-size: 0.82rem; color: var(--correct); }
+  .review-item .rt { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+  .hidden { display: none !important; }
+  .footer-note { text-align: center; color: var(--text-muted); font-size: 0.72rem; margin-top: 14px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="brand">
+    <h1>🧫 Intro to Embryology — Bloom's Blitz</h1>
+    <p>Department of Anatomy (SMS 107)</p>
+  </div>
+
+  <div id="startScreen" class="card">
+    <p style="margin:0 0 6px; font-weight:800; font-size:1.05rem;">Round three, <span class="name-tag">Prince</span> 👀</p>
+    <p style="margin:0; color:var(--text-muted); font-size:0.9rem;">Straight from the lecture: embryology as a science, its history, the stages of human development, and the basic mechanisms of morphogenesis — across <b>every level of Bloom's taxonomy</b>.</p>
+    <ul class="start-list">
+      <li><span class="dot"></span>100 questions: Remember, Understand, Apply, Analyze, Evaluate &amp; Create</li>
+      <li><span class="dot"></span>60 seconds per question — no answer, no marks, it moves on</li>
+      <li><span class="dot"></span>Answer (right or wrong) and it reveals the answer, then auto-advances</li>
+      <li><span class="dot"></span>No going back mid-quiz — but once you finish, retry just the ones you missed, as many rounds as it takes</li>
+    </ul>
+    <button class="primary-btn" id="startBtn">Start the Blitz</button>
+  </div>
+
+  <div id="quizScreen" class="hidden">
+    <div class="topbar">
+      <div class="topbar-row">
+        <span id="qCounter">Question 1 of 100</span>
+        <span id="scoreLive">Score: 0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="timer-row">
+        <div class="timer-track"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+        <span class="timer-num" id="timerNum">60s</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="badges">
+        <span class="badge" id="levelBadge">Remember</span>
+        <span class="badge topic" id="topicBadge">Embryology as a Science</span>
+        <span class="badge retry-tag hidden" id="retryBadge">Retry Round</span>
+      </div>
+      <p class="qtext" id="qText"></p>
+      <div class="options" id="optionsWrap"></div>
+      <div class="feedback-line" id="feedbackLine"></div>
+    </div>
+  </div>
+
+  <div id="resultsScreen" class="hidden">
+    <div class="card">
+      <div class="score-hero">
+        <div class="hero-label" id="heroLabel">Prince's final score</div>
+        <div class="big"><span id="finalScore">0</span><span id="finalDenom">/100</span></div>
+        <div class="pct" id="finalPct">0%</div>
+      </div>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div id="reviewBlock"></div>
+      <div id="actionButtons" style="margin-top:6px;"></div>
+    </div>
+    <p class="footer-note">Level breakdown reflects the original 100-question run. Retry rounds chip away at what's still missed.</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // Every question's o[0] is the correct answer. Options are shuffled at render time.
+  var LEVEL_COLOR = {
+    "Remember": "var(--remember)", "Understand": "var(--understand)", "Apply": "var(--apply)",
+    "Analyze": "var(--analyze)", "Evaluate": "var(--evaluate)", "Create": "var(--create)"
+  };
+
+  var QUESTIONS = [
+    {l:"Remember", t:"Embryology as a Science", q:`What is embryology defined as, according to the lecture?`, o:[`A biological science that studies morphogenesis and the embryonic and nervous development of man, from gametogenesis to birth`,`A branch of physics studying subatomic particles`,`A purely mathematical discipline with no biological application`,`A field concerned only with adult anatomy`]},
+    {l:"Remember", t:"Embryology as a Science", q:`What is the term for the formation and development of the embryo?`, o:[`Embryogenesis`,`Morphogenesis`,`Ontogeny`,`Gametogenesis`]},
+    {l:"Remember", t:"Embryology as a Science", q:`What is "ontogeny" identified as the object of study of embryology?`, o:[`The set of mechanisms and processes establishing the organism's organs and systems, from fertilization until birth`,`The study of adult organ function only`,`The study of evolutionary history across species`,`The study of postnatal psychological development only`]},
+    {l:"Understand", t:"Embryology as a Science", q:`Why is embryology described as a discipline linked to Anatomy, Histology, Genetics, Physiology, Obstetrics, Pediatrics, Pathology, and Teratology?`, o:[`Because understanding embryonic development connects to and informs many other medical and biological disciplines`,`Because embryology has no meaningful relationship to any other medical field`,`Because it replaces the need to study those other disciplines`,`Because those fields only study postnatal life, unrelated to embryology`]},
+    {l:"Understand", t:"Embryology as a Science", q:`Why does understanding embryology help explain the innervation of the diaphragm by cervical nerves, an otherwise puzzling adult anatomical feature?`, o:[`Because embryology provides a rational explanation of the relationships and forms of many normal adult structures based on how they developed`,`Because cervical nerve innervation of the diaphragm has nothing to do with development`,`Because adult anatomy is entirely unrelated to embryonic origins`,`Because the diaphragm forms only after birth, with no embryonic basis`]},
+    {l:"Understand", t:"Embryology as a Science", q:`Why has the study of embryology helped reduce infant mortality, according to the lecture?`, o:[`Because it has contributed to better environmental conditions, preventive medicine, and new medications alongside understanding development`,`Because embryology has no practical medical application`,`Because infant mortality is unrelated to developmental processes`,`Because embryology only studies non-human organisms`]},
+    {l:"Apply", t:"Embryology as a Science", q:`A medical student wants to understand why the veins of the abdominal and thoracic cavities are asymmetrical in adults. Which discipline, per the lecture, would help explain this?`, o:[`Embryology`,`Pure adult anatomy with no developmental context`,`Astronomy`,`A field unrelated to human biology`]},
+    {l:"Apply", t:"Embryology as a Science", q:`A researcher is studying how the placenta relates the fetus to the mother. Based on the lecture, which broader field does this fall under?`, o:[`Embryology`,`Cardiology exclusively`,`Orthopedics`,`Dermatology`]},
+    {l:"Apply", t:"Embryology as a Science", q:`A pathologist is investigating the origin of a particular tumor's formation. Based on the lecture, what insight might embryology offer?`, o:[`Clarification of processes such as growth, tissue regeneration, and the formation of some tumors`,`No relevant insight, since embryology is unrelated to tumor formation`,`Only insight into adult tumor treatment, not formation`,`Insight limited strictly to plant biology`]},
+    {l:"Analyze", t:"Embryology as a Science", q:`Comparing the definitions of "embryology" and "ontogeny" in the lecture, what is the key relationship between the two terms?`, o:[`Ontogeny is the object of study that embryology, as a science, investigates`,`Embryology and ontogeny are entirely unrelated concepts`,`Ontogeny is a synonym for postnatal development only`,`Embryology only studies ontogeny after birth`]},
+    {l:"Analyze", t:"Embryology as a Science", q:`The lecture lists congenital defects and infant mortality reduction as reasons embryology matters. What does this reveal about developmental science and clinical medicine?`, o:[`Understanding fundamental developmental mechanisms has direct downstream clinical applications, such as addressing congenital defects`,`Developmental science and clinical medicine are described as entirely separate fields`,`Congenital defects are described as unrelated to developmental processes`,`Clinical medicine has no need for embryological knowledge`]},
+    {l:"Analyze", t:"Embryology as a Science", q:`Considering embryology studies "from gametogenesis to birth," what does this reveal about its scope relative to a field studying only adult structures?`, o:[`Embryology's scope covers the entire developmental process from before fertilization through birth, rather than a fixed endpoint state`,`Embryology's scope is narrower than adult anatomy, covering only a single moment in time`,`Embryology and adult anatomy study an identical time span`,`Embryology has no defined starting or ending point`]},
+    {l:"Evaluate", t:"Embryology as a Science", q:`A student claims "embryology is only useful for fetal development and has no bearing on adult medicine." Evaluate using the lecture's stated importance of embryology.`, o:[`Weak — the lecture explicitly connects embryology to explaining normal adult structures, congenital defects, tumor formation, and reducing infant mortality`,`Correct — the lecture states embryology has no adult medical relevance`,`Correct — embryology is stated to end its relevance at birth entirely`,`Irrelevant — the lecture does not discuss embryology's importance at all`]},
+    {l:"Evaluate", t:"Embryology as a Science", q:`"Since embryology overlaps with so many disciplines, it doesn't have its own distinct object of study." Evaluate this claim.`, o:[`Flawed — the lecture identifies ontogeny specifically as embryology's object of study, despite its links to other disciplines`,`Valid — the lecture states embryology has no distinct object of study`,`Valid — overlapping disciplines can never each have their own focus`,`Irrelevant — object of study is not addressed in the lecture`]},
+    {l:"Evaluate", t:"Embryology as a Science", q:`A colleague argues "understanding congenital defects is only useful for prevention, not for understanding normal development." Assess this using the lecture's framing.`, o:[`Weak — the lecture frames understanding congenital defects and normal developmental processes as linked, since deepening knowledge of development helps clarify defect origins`,`Valid — the lecture separates congenital defect study entirely from developmental study`,`Valid — the lecture states congenital defects reveal nothing about normal development`,`Irrelevant — congenital defects are not mentioned in the lecture`]},
+    {l:"Create", t:"Embryology as a Science", q:`Designing a definition card for "embryogenesis," which correctly captures the lecture's meaning?`, o:[`The formation and development of the embryo`,`The study of adult organ systems only`,`The process of postnatal growth exclusively`,`A synonym for genetics with no developmental meaning`]},
+    {l:"Create", t:"Embryology as a Science", q:`Constructing a list of "reasons embryology matters," which item correctly reflects one of the lecture's stated points?`, o:[`It provides a rational explanation for normal adult structures, such as the location of intestinal loops within the abdominal cavity`,`It has no connection to understanding adult anatomy`,`It is solely a historical discipline with no modern relevance`,`It cannot address congenital malformations in any way`]},
+    {l:"Create", t:"Embryology as a Science", q:`Propose a short-answer item: "What object of study does embryology focus on?" What is the correct answer?`, o:[`Ontogeny — the mechanisms and processes establishing organs and systems from fertilization to birth`,`Adult skeletal structure exclusively`,`Postnatal psychological development exclusively`,`Cellular respiration in mature tissues`]},
+
+    {l:"Remember", t:"History of Embryology", q:`Which ancient culture, around 3000 BC, is described as having carried out a method of hatching bird eggs?`, o:[`The Ancient Egyptians`,`The Ancient Greeks`,`The Romans`,`The Chinese`]},
+    {l:"Remember", t:"History of Embryology", q:`Who is considered a founder of Embryology for writing a book describing the embryonic development of the chicken?`, o:[`Aristotle of Stagira`,`Claudius Galen`,`Marcelo Malpighi`,`Hans Spemann`]},
+    {l:"Remember", t:"History of Embryology", q:`Who received the Nobel Prize in 1935 for discovering the phenomenon of primary induction?`, o:[`Hans Spemann`,`Walther Flemming`,`Regnier De Graaf`,`Leonardo da Vinci`]},
+    {l:"Remember", t:"History of Embryology", q:`Which scientists discovered human sperm for the first time, in 1678?`, o:[`Hamm and Leeuwenhoek`,`Tijo and Levan`,`Edward Lewis and Nusslein-Volhard`,`Van Beneden and Flemming`]},
+    {l:"Remember", t:"History of Embryology", q:`What is the title of the first treatise on embryology, written by Indian culture around 1416 BC?`, o:[`Garbha Upanishad`,`On the Formation of the Fetus`,`Ovo Incubato`,`The Koran`]},
+    {l:"Understand", t:"History of Embryology", q:`Why is Claudius Galen's book "On the Formation of the Fetus" historically significant, according to the lecture?`, o:[`Because it described the development and nutrition of fetuses and structures now known as the allantois, amnion, and placenta`,`Because it was the very first treatise on embryology ever written`,`Because it disproved the existence of the placenta`,`Because it focused exclusively on postnatal anatomy`]},
+    {l:"Understand", t:"History of Embryology", q:`Why is Regnier De Graaf's 1672 description of ovarian follicles considered significant?`, o:[`Because it identified structures still named after him today (De Graaf or Graafian follicles)`,`Because it disproved the existence of ovarian follicles`,`Because it was unrelated to reproductive anatomy`,`Because it described sperm rather than follicles`]},
+    {l:"Understand", t:"History of Embryology", q:`Why did Spallanzani's 1775 experiments matter for understanding fertilization?`, o:[`Because he demonstrated that both the oocyte and the sperm were necessary to start development of a new being`,`Because he proved that only the sperm was necessary for development`,`Because he proved that only the oocyte was necessary for development`,`Because his work was unrelated to fertilization`]},
+    {l:"Understand", t:"History of Embryology", q:`Why was Tijo and Levan's 1955-1956 finding significant?`, o:[`Because they noted the correct number of human chromosomes (46)`,`Because they discovered the human sperm for the first time`,`Because they first described the notochord`,`Because they proposed the concept of the germ layer`]},
+    {l:"Understand", t:"History of Embryology", q:`Why is the 1995 Nobel Prize (Lewis, Nüsslein-Volhard, Wieschaus) relevant to embryology's history?`, o:[`Because it recognized their discovery of the genes that control embryonic development`,`Because it recognized the discovery of the placenta`,`Because it recognized the invention of the microscope`,`Because it recognized the first description of ovarian follicles`]},
+    {l:"Apply", t:"History of Embryology", q:`A historian researches who first proposed the concept of a "layer" — that the zygote gives rise to layers of cells (today's embryonic disc). Which figure should they investigate?`, o:[`Caspar Friedrich Wolff (1759)`,`Walther Flemming (1878)`,`Édouard Van Beneden (1883)`,`Marcelo Malpighi (1628-1694)`]},
+    {l:"Apply", t:"History of Embryology", q:`A student wants to trace the discovery that germ cells have a reduced number of chromosomes. Which figure should they credit?`, o:[`Édouard Van Beneden`,`Regnier De Graaf`,`Leonardo da Vinci`,`Hippocrates of Kos`]},
+    {l:"Apply", t:"History of Embryology", q:`Someone researches early drawings of a pregnant uterus containing fetuses. Which historical figure is associated with this?`, o:[`Leonardo da Vinci`,`Aristotle of Stagira`,`Claudius Galen`,`Constantino the African`]},
+    {l:"Apply", t:"History of Embryology", q:`A student must identify who is considered a founder of embryology for writing "Ovo incubato." Who should they name?`, o:[`Marcelo Malpighi`,`Hans Spemann`,`Walther Flemming`,`Tijo and Levan`]},
+    {l:"Apply", t:"History of Embryology", q:`A researcher wants to know who first looked at chromosomes and pioneered mitosis research. Which figure fits?`, o:[`Walther Flemming (1878)`,`Édouard Van Beneden (1883)`,`Tijo and Levan (1955-1956)`,`Regnier De Graaf (1672)`]},
+    {l:"Analyze", t:"History of Embryology", q:`Both Aristotle and Malpighi are described as "founders" of embryology in the lecture. What does this suggest about how the discipline's history is framed?`, o:[`The lecture attributes foundational status to multiple figures across different eras, reflecting cumulative contributions rather than a single origin point`,`Only one person in history can ever be credited as a founder of a scientific field`,`Aristotle and Malpighi made identical contributions at the same point in history`,`The lecture states Malpighi's work invalidated Aristotle's earlier contributions`]},
+    {l:"Analyze", t:"History of Embryology", q:`Van Beneden (1883) observed reduced chromosome number in germ cells; Tijo and Levan (1955-56) determined the correct number (46). What does this ~70-year gap suggest?`, o:[`Chromosome research built incrementally over time, with early qualitative observations preceding later precise quantitative determination`,`Both discoveries were made simultaneously with no time gap`,`Tijo and Levan's work came before Van Beneden's`,`Chromosome research showed no historical progression at all`]},
+    {l:"Analyze", t:"History of Embryology", q:`Both the Koran (7th century) and the Garbha Upanishad (~1416 BC) are cited as early texts discussing conception/embryo stages. What does this suggest about the history of embryological thought?`, o:[`Interest in development and conception predates modern scientific embryology by many centuries, appearing across multiple cultural and religious traditions`,`Only modern Western science ever addressed embryonic development`,`These texts are described as having no relationship to embryological concepts`,`The Koran and Garbha Upanishad are described as the same document`]},
+    {l:"Analyze", t:"History of Embryology", q:`Comparing Hippocrates/Aristotle's comparative observation of birds and humans with Spallanzani's experimental method, what methodological shift does this represent?`, o:[`A shift from purely observational/comparative approaches to a deliberate experimental method for testing embryological questions`,`No methodological change occurred between these eras`,`Spallanzani abandoned observation entirely in favor of pure theory`,`Hippocrates and Aristotle used experimental methods identical to Spallanzani's`]},
+    {l:"Analyze", t:"History of Embryology", q:`Spemann's primary induction discovery describes "how one tissue determines the fate of another." How does this connect to the modern concept of "induction" as a basic mechanism of development?`, o:[`Spemann's historical discovery of primary induction is the origin of the concept later formalized as one of the basic morphogenetic mechanisms`,`Spemann's discovery is unrelated to the modern concept of induction`,`Induction as a mechanism was discovered after Spemann's death with no connection to his work`,`Primary induction and morphogenetic induction are described as opposite phenomena`]},
+    {l:"Evaluate", t:"History of Embryology", q:`A student claims "since ancient cultures like the Egyptians and Indians made early observations, modern embryology owes nothing to 19th-20th century scientists." Evaluate.`, o:[`Weak — the lecture credits both ancient observers and 19th-20th century scientists (Flemming, Van Beneden, Spemann, etc.) with distinct, significant contributions`,`Valid — the lecture states only ancient cultures contributed meaningfully to embryology`,`Valid — the lecture excludes any 19th-20th century contributions`,`Irrelevant — the lecture does not discuss any historical timeline`]},
+    {l:"Evaluate", t:"History of Embryology", q:`"Since Leonardo da Vinci made drawings of pregnant uteruses, he should be credited as the founder of embryology rather than Aristotle." Evaluate against the lecture's own attributions.`, o:[`Weak — the lecture specifically credits Aristotle (and separately Malpighi) as founders, while da Vinci's contribution is described only as anatomical drawings`,`Valid — the lecture explicitly names da Vinci as the sole founder of embryology`,`Valid — the lecture states Aristotle made no meaningful contributions`,`Irrelevant — founder attribution is not discussed in the lecture`]},
+    {l:"Create", t:"History of Embryology", q:`Building a timeline of embryology's history, which correct chronological order matches the lecture's dates?`, o:[`Ancient Egyptians (3000 BC) → Aristotle (384-322 BC) → Galen (per lecture, 130-201 BC) → Da Vinci (1452-1519) → Spemann (1935)`,`Spemann (1935) → Da Vinci (1452-1519) → Aristotle (384-322 BC) → Ancient Egyptians (3000 BC)`,`Tijo and Levan (1955) → Van Beneden (1883) → Flemming (1878) → Aristotle (384-322 BC)`,`All listed historical events occurred within the same century`]},
+    {l:"Create", t:"History of Embryology", q:`Constructing a matching exercise linking historical figure to contribution, which pairing is correct?`, o:[`Hamm and Leeuwenhoek → first discovery of human sperm (1678)`,`Hamm and Leeuwenhoek → discovery of the correct chromosome number`,`Hamm and Leeuwenhoek → discovery of primary induction`,`Hamm and Leeuwenhoek → description of ovarian follicles`]},
+
+    {l:"Remember", t:"Stages of Human Development", q:`What does the "human ontogenetic circle" include, according to the lecture?`, o:[`The entire life of the individual, from the beginning of development from the zygote until death`,`Only the prenatal period`,`Only the first year after birth`,`Only the fetal stage`]},
+    {l:"Remember", t:"Stages of Human Development", q:`What are the two main stages of the human ontogenetic circle?`, o:[`Prenatal and Postnatal`,`Embryonic and Fetal only`,`Neonatal and Adult only`,`Gametogenesis and Fertilization only`]},
+    {l:"Remember", t:"Stages of Human Development", q:`What are the three prenatal substages described in the lecture?`, o:[`Pre-embryonic (undifferentiated), Embryonic, and Fetal`,`Neonatal, Lactation, and Adolescent`,`Gametogenesis, Ontogeny, and Morphogenesis`,`Induction, Differentiation, and Migration`]},
+    {l:"Remember", t:"Stages of Human Development", q:`When does the pre-embryonic (undifferentiated) stage begin and end?`, o:[`Begins with fertilization in the first week and ends with implantation on the 7th day`,`Begins at birth and ends at one year`,`Begins in the second week and ends in the eighth week`,`Begins in the ninth week and ends at birth`]},
+    {l:"Remember", t:"Stages of Human Development", q:`When does the fetal stage begin, according to the lecture?`, o:[`The ninth week of development`,`The first week of development`,`The moment of birth`,`The second week of development`]},
+    {l:"Understand", t:"Stages of Human Development", q:`Why is the embryonic stage (2nd–8th week) considered "the most critical stage of development"?`, o:[`Because all mechanisms of development are actively occurring, so alteration by external agents at this time will cause congenital malformations`,`Because no developmental mechanisms occur during this stage`,`Because this is the stage with the least vulnerability to external agents`,`Because this stage occurs entirely after birth`]},
+    {l:"Understand", t:"Stages of Human Development", q:`Why is the cardiovascular system described as the first system to differentiate during the embryonic stage?`, o:[`Because of the growing embryonic needs that require circulation early in development`,`Because the cardiovascular system has no functional role in the embryo`,`Because it differentiates only after the nervous system`,`Because it is the last system to develop, not the first`]},
+    {l:"Understand", t:"Stages of Human Development", q:`Why is the action of an external agent during the first week of development described as potentially causing death or loss of the conceptus?`, o:[`Because developmental mechanisms are expressed to a lesser extent at this stage, and genetic defects or external agents at this time are often linked to loss of the conceptus, possibly as natural selection`,`Because this stage is described as the most resistant to any external influence`,`Because pregnancy is already well established by this point, making loss unlikely`,`Because this stage occurs after implantation is fully complete`]},
+    {l:"Understand", t:"Stages of Human Development", q:`Why does the lecture distinguish "embryology" weeks from "obstetric" weeks when describing trimesters?`, o:[`Because obstetric trimesters are counted from the date of the last menstrual period, creating a different week count than embryological staging`,`Because embryology and obstetrics are described as using identical counting methods`,`Because obstetrics does not use a trimester system at all`,`Because embryological staging begins counting from birth, not fertilization`]},
+    {l:"Understand", t:"Stages of Human Development", q:`Why does the lecture note that fetal growth "grows linearly and rapidly" after the second trimester, with weight roughly doubling every six weeks?`, o:[`To illustrate the fetal stage's characteristic pattern of organic maturation and increasingly rapid weight gain as gestation progresses`,`To show that fetal weight decreases steadily after 20 weeks`,`To demonstrate that fetal growth is unrelated to gestational week`,`To show that growth stops completely after the second trimester`]},
+    {l:"Apply", t:"Stages of Human Development", q:`A pregnancy is at 5 weeks post-fertilization. Which prenatal substage is the embryo in?`, o:[`Embryonic stage`,`Pre-embryonic stage`,`Fetal stage`,`Postnatal stage`]},
+    {l:"Apply", t:"Stages of Human Development", q:`A blastocyst has just implanted on day 7 of development. Which prenatal substage is ending at this point?`, o:[`The pre-embryonic (undifferentiated) stage`,`The embryonic stage`,`The fetal stage`,`The postnatal stage`]},
+    {l:"Apply", t:"Stages of Human Development", q:`A fetus at 20 weeks weighs approximately 500g. Based on the lecture's growth description, what would you expect roughly six weeks later?`, o:[`Approximately double, around 1,000g`,`Unchanged, still around 500g`,`Reduced to about 250g`,`Approximately 10,000g`]},
+    {l:"Apply", t:"Stages of Human Development", q:`A child is 4 years old. Based on the postnatal sub-stages in the lecture, which sub-stage are they in?`, o:[`Preschool (2 to 5 years)`,`Neonatal period (first month)`,`Lactation (first year)`,`School (5 to 12 years)`]},
+    {l:"Apply", t:"Stages of Human Development", q:`A clinician notes a pregnancy is "12 weeks" using obstetric dating. Based on the lecture's distinction, does this correspond to exactly the same developmental week as embryology's dating?`, o:[`Not necessarily — obstetric weeks are counted from the last menstrual period, which differs from embryological staging conventions`,`Yes — both fields always use identical counting with no distinction`,`Obstetric dating does not use a trimester system at all`,`Embryological dating always starts counting from birth`]},
+    {l:"Analyze", t:"Stages of Human Development", q:`Comparing the pre-embryonic and embryonic stages, what is the key contrast in developmental mechanism activity described in the lecture?`, o:[`Developmental mechanisms are expressed to a lesser extent in the pre-embryonic stage, while the embryonic stage is when all mechanisms of development are actively present`,`Both stages show identical levels of developmental mechanism activity`,`The pre-embryonic stage shows more developmental mechanism activity than the embryonic stage`,`Neither stage involves any developmental mechanisms`]},
+    {l:"Analyze", t:"Stages of Human Development", q:`The embryonic stage is called the stage of "greatest susceptibility and vulnerability." How does this relate to which systems are differentiating during this window?`, o:[`Critical systems like the cardiovascular and nervous systems are actively differentiating, making disruption especially consequential for later structure and function`,`No organ systems differentiate during the embryonic stage at all`,`Vulnerability is described as unrelated to which systems are forming`,`The embryonic stage occurs after all organ systems are already fully formed`]},
+    {l:"Analyze", t:"Stages of Human Development", q:`Comparing the postnatal sub-stages (neonatal, lactation, transitional, preschool, school, adolescent, adult), what pattern do their durations follow as age increases?`, o:[`The sub-stages generally span increasingly longer periods of time as the individual ages (e.g., neonatal = 1 month, adolescent extends to 20 years)`,`Every sub-stage lasts exactly the same duration`,`The sub-stages get progressively shorter as age increases`,`Postnatal sub-stages are not defined by any time duration`]},
+    {l:"Analyze", t:"Stages of Human Development", q:`The lecture states length increases ~3.5 times and weight ~20 times during the 20 years after birth. What does this reveal about linear growth vs. weight gain?`, o:[`Weight increases proportionally much more than length over this period, showing growth isn't uniform across different measures`,`Length and weight increase by identical proportional amounts`,`Length increases more than weight over this period`,`Neither length nor weight changes during postnatal development`]},
+    {l:"Analyze", t:"Stages of Human Development", q:`Comparing the fetal stage's trimesters, what pattern in weight change does the lecture describe from 20 weeks to term?`, o:[`Weight roughly doubles every several weeks in earlier trimesters, then growth slows later due to decreased placental function`,`Weight remains completely constant across all three trimesters`,`Weight decreases steadily from 20 to 40 weeks`,`Weight only begins increasing after 40 weeks`]},
+    {l:"Evaluate", t:"Stages of Human Development", q:`A student claims "the postnatal stage is unimportant to embryology since development is complete by birth." Evaluate using the lecture's description.`, o:[`Weak — the lecture states development of systems like the nervous, respiratory, and urogenital systems continues after birth to a lesser or greater extent`,`Correct — the lecture states all development is fully complete at birth`,`Correct — postnatal changes are described as unrelated to any organ system`,`Irrelevant — the lecture doesn't discuss postnatal development at all`]},
+    {l:"Evaluate", t:"Stages of Human Development", q:`"Since the pre-embryonic stage shows fewer active developmental mechanisms, an external agent could never cause harm during this period." Evaluate.`, o:[`Flawed — the lecture states an external agent's action during the first week can cause death, and genetic defects are often the cause of loss during this period`,`Valid — the lecture states this stage is entirely risk-free`,`Valid — external agents only affect the fetal stage, per the lecture`,`Irrelevant — risk during this stage is not addressed in the lecture`]},
+    {l:"Evaluate", t:"Stages of Human Development", q:`"Trimester definitions are identical whether used by an embryologist or an obstetrician." Evaluate against the lecture's clarification.`, o:[`Inaccurate — the lecture explicitly distinguishes embryology's and obstetrics' differing week/stage conventions, with obstetric trimesters counted from the last menstrual period`,`Accurate — the lecture states both fields use identical trimester definitions`,`Accurate — obstetrics does not divide pregnancy into trimesters at all`,`Irrelevant — trimester differences are not discussed in the lecture`]},
+    {l:"Evaluate", t:"Stages of Human Development", q:`A colleague argues "since the fetal stage is defined by organic maturation and growth, no organ differentiation happens at all during this period." Assess this claim.`, o:[`Overstated — the lecture attributes active mechanism-driven differentiation primarily to the embryonic stage, describing the fetal stage as maturation and growth of already-differentiated structures, not zero further change`,`Valid — the lecture states organs stop changing entirely after the eighth week`,`Valid — maturation and differentiation are described as the exact same process`,`Irrelevant — the fetal stage's characteristics are not discussed in the lecture`]},
+    {l:"Evaluate", t:"Stages of Human Development", q:`"Since weight gain slows near the end of the third trimester, this suggests the fetus is regressing in development." Evaluate this claim.`, o:[`Flawed — the lecture attributes slower growth near term to decreased placental function, not regression, and by 38 weeks development is considered essentially completed`,`Valid — the lecture states the fetus loses developed structures near term`,`Valid — slower growth always indicates regression in any context`,`Irrelevant — growth rate near term is not addressed in the lecture`]},
+    {l:"Create", t:"Stages of Human Development", q:`Designing a timeline chart of prenatal development, which correctly orders the three substages with their approximate windows?`, o:[`Pre-embryonic (week 1) → Embryonic (weeks 2–8) → Fetal (week 9–birth)`,`Fetal (week 1) → Embryonic (weeks 2–8) → Pre-embryonic (week 9–birth)`,`Embryonic (week 1) → Fetal (weeks 2–8) → Pre-embryonic (week 9–birth)`,`All three substages occur simultaneously starting at fertilization`]},
+    {l:"Create", t:"Stages of Human Development", q:`Constructing a postnatal sub-stage reference table, which correctly pairs "Transitional" with its described age range?`, o:[`The second year of life`,`The first month after birth`,`From 2 to 5 years`,`From 5 to 12 years`]},
+    {l:"Create", t:"Stages of Human Development", q:`Propose a short-answer item: "At what approximate gestational age is fetal development considered essentially completed, per the lecture's weight milestones?" What is the correct answer?`, o:[`Around 38 weeks, when weight reaches about 3,000g`,`Around 20 weeks, when weight reaches about 500g`,`Around 9 weeks, at the start of the fetal stage`,`Immediately after fertilization`]},
+    {l:"Create", t:"Stages of Human Development", q:`Create a case-based item: "A structure connects the placenta to the embryo-fetus and contains vessels carrying blood in both directions." What structure does this describe?`, o:[`The umbilical cord`,`The notochord`,`The neural tube`,`The primitive streak`]},
+    {l:"Create", t:"Stages of Human Development", q:`Design a matching item pairing "Neonatal period" to its defined duration from the lecture.`, o:[`The first month after birth`,`The first year of life`,`The second year of life`,`From 2 to 5 years`]},
+
+    {l:"Remember", t:"Morphogenesis & Basic Mechanisms", q:`What is morphogenesis defined as in the lecture?`, o:[`A group of processes that shape the internal and external configuration of the embryo`,`The formation of gametes only`,`A synonym for postnatal growth`,`A process occurring exclusively in adult tissue repair`]},
+    {l:"Remember", t:"Morphogenesis & Basic Mechanisms", q:`Which five basic mechanisms of development are listed in the lecture?`, o:[`Induction, differentiation, growth, migration, and programmed cell death (apoptosis)`,`Fertilization, cleavage, gastrulation, neurulation, and birth`,`Mitosis, meiosis, fertilization, implantation, and lactation`,`Ontogeny, phylogeny, teratology, histology, and pathology`]},
+    {l:"Remember", t:"Morphogenesis & Basic Mechanisms", q:`What is "induction," as defined in the lecture?`, o:[`The process by which one embryonic tissue acts on another, causing a transformation involving gene expression/repression`,`The process of a cell dying in a programmed manner`,`The increase in spatial dimensions and weight of a tissue`,`The change of place of cells within the embryonic body`]},
+    {l:"Remember", t:"Morphogenesis & Basic Mechanisms", q:`What is "cell differentiation," as defined in the lecture?`, o:[`When a cell acquires its own distinguishing characteristics by synthesizing a new pattern of proteins`,`The process of a tissue increasing in size only`,`The movement of cells from one location to another`,`The process by which one tissue induces another`]},
+    {l:"Remember", t:"Morphogenesis & Basic Mechanisms", q:`What is the medical term for programmed cell death, as used in the lecture?`, o:[`Apoptosis`,`Necrosis`,`Mitosis`,`Meiosis`]},
+    {l:"Understand", t:"Morphogenesis & Basic Mechanisms", q:`Why does induction, as described in the lecture, involve gene expression and/or repression?`, o:[`Because the transformation caused by one tissue acting on another occurs through changes in which genes are turned on or off in the responding tissue`,`Because induction never involves any genetic component`,`Because induction only affects protein degradation, not gene activity`,`Because induction is described as occurring without any tissue interaction`]},
+    {l:"Understand", t:"Morphogenesis & Basic Mechanisms", q:`Why is cell differentiation linked to "a new pattern of proteins" rather than a change in the cell's DNA sequence?`, o:[`Because differentiation is the cell acquiring specific structure and function through a distinct protein synthesis pattern, not through altering its genetic sequence`,`Because differentiation always involves mutating the DNA sequence`,`Because differentiation has nothing to do with protein synthesis`,`Because differentiated cells lose all their proteins`]},
+    {l:"Understand", t:"Morphogenesis & Basic Mechanisms", q:`Why is proliferation described as "the fundamental form of growth during the prenatal stages"?`, o:[`Because it is caused by an increase in the number of cells, which is the primary way tissues expand early in development`,`Because proliferation only occurs after birth`,`Because proliferation refers to a decrease in cell number`,`Because proliferation is unrelated to any form of growth`]},
+    {l:"Understand", t:"Morphogenesis & Basic Mechanisms", q:`Why is differential growth responsible for the head occupying about 50% of the skull-rump body length by the embryonic-to-fetal transition?`, o:[`Because differential growth means not all regions or organs of an embryo grow at the same time and in equal proportions, allowing the cephalic region to grow disproportionately`,`Because all body regions are described as growing at identical rates throughout development`,`Because the head undergoes apoptosis less than other regions, with no relation to growth rate`,`Because differential growth applies only to postnatal development`]},
+    {l:"Understand", t:"Morphogenesis & Basic Mechanisms", q:`Why must epiblast cells migrate through the primitive streak, according to the lecture's migration example?`, o:[`To give rise to the mesoderm and endoderm, since these germ layers form through this migratory process`,`Because migration through the primitive streak has no developmental purpose`,`Because epiblast cells never move from their original position`,`Because the primitive streak forms only after migration is complete`]},
+    {l:"Apply", t:"Morphogenesis & Basic Mechanisms", q:`A researcher observes the notochord, via the protein Sonic hedgehog (Shh), causing changes in the overlying ectoderm. Which basic mechanism does this best illustrate?`, o:[`Induction`,`Apoptosis`,`Differential growth`,`Hypertrophy`]},
+    {l:"Apply", t:"Morphogenesis & Basic Mechanisms", q:`A child is born with syndactyly (fused fingers/toes). Based on the lecture, disruption of which mechanism is implicated?`, o:[`Programmed cell death (apoptosis)`,`Cell differentiation`,`Cell migration`,`Induction`]},
+    {l:"Apply", t:"Morphogenesis & Basic Mechanisms", q:`Primordial germ cells move from the embryonic disc to the extra-embryonic caudal portion of the body and then to the developing gonads. Which mechanism does this describe?`, o:[`Cell migration`,`Cell differentiation`,`Apoptosis`,`Hypertrophy`]},
+    {l:"Apply", t:"Morphogenesis & Basic Mechanisms", q:`A tissue's enlargement during the prenatal period is driven mainly by an increase in the number of cells. Which growth form is this?`, o:[`Proliferation`,`Hypertrophy`,`Deposit of intercellular substance`,`Apoptosis`]},
+    {l:"Apply", t:"Morphogenesis & Basic Mechanisms", q:`Hyaline cartilage growth is attributed mainly to accumulation of extracellular matrix substances rather than new cells. Which growth form is this?`, o:[`Deposit of intercellular substance`,`Proliferation`,`Hypertrophy`,`Induction`]},
+    {l:"Analyze", t:"Morphogenesis & Basic Mechanisms", q:`Comparing proliferation and hypertrophy as growth forms, what is the key distinction between them?`, o:[`Proliferation increases the number of cells, while hypertrophy increases the size of individual cells (e.g., skeletal striated muscle)`,`Both terms describe an identical process of increasing cell number`,`Hypertrophy always decreases cell size, unlike proliferation`,`Neither term involves any change to cells at all`]},
+    {l:"Analyze", t:"Morphogenesis & Basic Mechanisms", q:`Comparing induction and cell differentiation, both involve gene expression changes, but what is the key relational difference between them?`, o:[`Induction involves one tissue acting on another to cause a change, while differentiation describes a cell acquiring its own distinguishing characteristics, which may result from such induction`,`Induction and differentiation are described as entirely identical processes`,`Differentiation always precedes and causes induction, never the reverse`,`Neither process involves changes in gene expression`]},
+    {l:"Analyze", t:"Morphogenesis & Basic Mechanisms", q:`Apoptosis is described as an "orderly remodeling process" rather than simple cell damage. What does this reveal about its role in normal development?`, o:[`Apoptosis is a regulated, purposeful mechanism (like sculpting away tissue between digits) rather than accidental cell death, making it essential to normal morphogenesis`,`Apoptosis is described as always harmful and never part of normal development`,`Apoptosis is identical to random, unregulated cell injury`,`Apoptosis has no role in shaping normal embryonic structures`]},
+    {l:"Analyze", t:"Morphogenesis & Basic Mechanisms", q:`The lecture states all five basic mechanisms are "genetically regulated" with "inducers and inhibitors for each." What does this imply about disruptions to any one mechanism?`, o:[`Since each mechanism depends on a balance of genetic regulators, disturbing that balance for any reason could alter normal development`,`Genetic regulation only applies to induction, not the other four mechanisms`,`Disruption of these mechanisms is described as having no developmental consequence`,`Inducers and inhibitors are described as irrelevant to how these mechanisms function`]},
+    {l:"Analyze", t:"Morphogenesis & Basic Mechanisms", q:`Spina bifida and anencephaly are both listed under "defects in the formation of the neural tube." What does grouping them together suggest about their underlying origin?`, o:[`Both conditions are presented as arising from disruptions during neural tube formation, despite potentially differing in severity or presentation`,`The two conditions are described as having completely unrelated developmental origins`,`Neither condition is related to neural tube development`,`Spina bifida and anencephaly are described as the same exact condition`]},
+    {l:"Evaluate", t:"Morphogenesis & Basic Mechanisms", q:`A student claims "growth is always caused by an increase in cell number (proliferation), with no other mechanism involved." Evaluate using the lecture's growth forms.`, o:[`Flawed — the lecture describes three growth forms: proliferation, deposit of intercellular substance, and hypertrophy, not just increased cell number`,`Valid — the lecture states proliferation is the only form of growth that exists`,`Valid — hypertrophy and intercellular substance deposit are described as forms of induction, not growth`,`Irrelevant — growth forms are not discussed in the lecture`]},
+    {l:"Evaluate", t:"Morphogenesis & Basic Mechanisms", q:`"Since apoptosis causes cell death, its disruption could never lead to a structural defect like syndactyly." Evaluate this claim.`, o:[`Flawed — the lecture explicitly presents syndactyly as resulting from an arrest of programmed cell death, meaning apoptosis disruption does cause structural defects`,`Valid — the lecture states apoptosis has no connection to syndactyly`,`Valid — the lecture states apoptosis disruption can only cause death, not malformation`,`Irrelevant — syndactyly's cause is not addressed in the lecture`]},
+    {l:"Evaluate", t:"Morphogenesis & Basic Mechanisms", q:`A colleague argues "differential growth is unimportant since all embryonic regions eventually reach adult proportions anyway." Assess this against the lecture's description.`, o:[`Understated — the lecture specifically highlights differential growth as explaining an observable feature during development (the head occupying ~50% of skull-rump length), showing its significance in that window regardless of eventual adult proportions`,`Valid — the lecture states differential growth has no observable effect at any stage`,`Valid — all body regions are described as growing in exactly equal proportion at all times`,`Irrelevant — differential growth is not discussed in the lecture`]},
+    {l:"Evaluate", t:"Morphogenesis & Basic Mechanisms", q:`"Since migration only describes primordial germ cells moving to the gonads, it has no other described role in the lecture." Evaluate this claim.`, o:[`Flawed — the lecture also describes epiblast cells migrating through the primitive streak to form the mesoderm and endoderm, showing migration applies to more than one example`,`Valid — the lecture describes only the primordial germ cell example, with no other migration example`,`Valid — mesoderm and endoderm formation is described as unrelated to any migration process`,`Irrelevant — migration examples are not discussed in the lecture`]},
+    {l:"Create", t:"Morphogenesis & Basic Mechanisms", q:`Designing a reference chart of "Basic Mechanism → Definition," which pairing correctly matches "Growth"?`, o:[`An increase in the spatial dimensions and weight of a cell, organ, or tissue`,`The change of place of cells within the embryonic body`,`One tissue acting on another to cause a transformation`,`A cell acquiring its own distinguishing characteristics`]},
+    {l:"Create", t:"Morphogenesis & Basic Mechanisms", q:`Constructing a matching exercise linking "growth form" to its description, which pairing correctly matches "Hypertrophy"?`, o:[`Increase in the size of a cell, characteristic of skeletal striated muscle cells`,`Increase in the number of cells`,`Accumulation of extracellular matrix substances`,`Movement of a cell to a new location`]},
+    {l:"Create", t:"Morphogenesis & Basic Mechanisms", q:`Propose a case-based item: "An embryo shows trilaminar body folding, with the notochord acting on the overlying ectoderm via Sonic hedgehog protein to form the neural tube." Which mechanism should the correct answer name?`, o:[`Induction`,`Hypertrophy`,`Proliferation`,`Apoptosis`]},
+    {l:"Create", t:"Morphogenesis & Basic Mechanisms", q:`Create a classification item: "A patient is born with anencephaly, a defect linked to abnormal formation of a specific embryonic structure." Which structure's formation does this relate to?`, o:[`The neural tube`,`The placenta`,`The umbilical cord`,`The primitive streak`]}
+  ];
+
+  var FULL_TOTAL = QUESTIONS.length;
+  var LETTERS = ["A","B","C","D"];
+
+  var startScreen = document.getElementById('startScreen');
+  var quizScreen = document.getElementById('quizScreen');
+  var resultsScreen = document.getElementById('resultsScreen');
+  var startBtn = document.getElementById('startBtn');
+
+  var qCounter = document.getElementById('qCounter');
+  var scoreLive = document.getElementById('scoreLive');
+  var progressFill = document.getElementById('progressFill');
+  var timerFill = document.getElementById('timerFill');
+  var timerNum = document.getElementById('timerNum');
+  var levelBadge = document.getElementById('levelBadge');
+  var topicBadge = document.getElementById('topicBadge');
+  var retryBadge = document.getElementById('retryBadge');
+  var qText = document.getElementById('qText');
+  var optionsWrap = document.getElementById('optionsWrap');
+  var feedbackLine = document.getElementById('feedbackLine');
+
+  var deck = [];
+  var idx = 0;
+  var score = 0;
+  var answered = false;
+  var timeLeft = 60;
+  var timerInt = null;
+  var currentCorrectIdx = 0;
+  var currentShuffled = [];
+  var lastCorrectLetter = -1;
+  var mode = 'full';
+
+  var levelStats = {};
+  var missed = [];
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function resetFullState(){
+    idx = 0; score = 0; missed = [];
+    levelStats = {};
+    ["Remember","Understand","Apply","Analyze","Evaluate","Create"].forEach(function(l){
+      levelStats[l] = {correct:0, total:0};
+    });
+    lastCorrectLetter = -1;
+  }
+
+  function shuffleOptionsFor(item){
+    var pairs = item.o.map(function(text, i){ return {text: text, isCorrect: i === 0}; });
+    var shuffled = shuffle(pairs);
+    var correctIdx = shuffled.findIndex(function(p){ return p.isCorrect; });
+    var attempts = 0;
+    while (correctIdx === lastCorrectLetter && attempts < 6) {
+      shuffled = shuffle(pairs);
+      correctIdx = shuffled.findIndex(function(p){ return p.isCorrect; });
+      attempts++;
+    }
+    lastCorrectLetter = correctIdx;
+    return { options: shuffled.map(function(p){ return p.text; }), correctIdx: correctIdx };
+  }
+
+  function escapeHtml(str){
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function renderQuestion(){
+    clearInterval(timerInt);
+    answered = false;
+    timeLeft = 60;
+    var item = deck[idx];
+    var r = shuffleOptionsFor(item);
+    currentShuffled = r.options;
+    currentCorrectIdx = r.correctIdx;
+
+    qCounter.textContent = "Question " + (idx + 1) + " of " + deck.length;
+    scoreLive.textContent = "Score: " + score;
+    progressFill.style.width = ((idx) / deck.length * 100) + "%";
+
+    levelBadge.textContent = item.l;
+    levelBadge.style.background = LEVEL_COLOR[item.l] || "var(--accent)";
+    topicBadge.textContent = item.t;
+    retryBadge.classList.toggle('hidden', mode !== 'retry');
+    qText.textContent = item.q;
+    feedbackLine.textContent = "";
+    feedbackLine.className = "feedback-line";
+
+    optionsWrap.innerHTML = "";
+    currentShuffled.forEach(function(text, i){
+      var btn = document.createElement('button');
+      btn.className = "option-btn";
+      btn.innerHTML = '<span class="letter">' + LETTERS[i] + '</span><span>' + escapeHtml(text) + '</span>';
+      btn.addEventListener('click', function(){ selectOption(i); });
+      optionsWrap.appendChild(btn);
+    });
+
+    timerFill.style.transition = "none";
+    timerFill.style.width = "100%";
+    timerFill.style.background = "var(--apply)";
+    timerNum.textContent = "60s";
+    void timerFill.offsetWidth;
+    timerFill.style.transition = "width 1s linear, background 0.3s ease";
+
+    timerInt = setInterval(tick, 1000);
+  }
+
+  function tick(){
+    timeLeft -= 1;
+    if (timeLeft < 0) timeLeft = 0;
+    var pct = (timeLeft / 60) * 100;
+    timerFill.style.width = pct + "%";
+    timerNum.textContent = timeLeft + "s";
+    if (timeLeft <= 10) { timerFill.style.background = "var(--incorrect)"; }
+    else if (timeLeft <= 25) { timerFill.style.background = "var(--analyze)"; }
+    else { timerFill.style.background = "var(--apply)"; }
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInt);
+      if (!answered) handleTimeout();
+    }
+  }
+
+  function lockButtons(){
+    var btns = optionsWrap.querySelectorAll('.option-btn');
+    btns.forEach(function(b){ b.style.pointerEvents = "none"; });
+    return btns;
+  }
+
+  function recordStat(item, wasCorrect){
+    if (mode !== 'full') return;
+    levelStats[item.l].total += 1;
+    if (wasCorrect) levelStats[item.l].correct += 1;
+  }
+
+  function selectOption(i){
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInt);
+    var item = deck[idx];
+    var btns = lockButtons();
+    var wasCorrect = (i === currentCorrectIdx);
+
+    btns[currentCorrectIdx].classList.add('correct');
+    if (!wasCorrect) btns[i].classList.add('incorrect');
+    btns.forEach(function(b, bi){
+      if (bi !== i && bi !== currentCorrectIdx) b.classList.add('dim');
+    });
+
+    if (wasCorrect) {
+      score += 1;
+      feedbackLine.textContent = "✓ Correct!";
+      feedbackLine.className = "feedback-line ok";
+    } else {
+      feedbackLine.textContent = "✗ Not quite — correct answer highlighted";
+      feedbackLine.className = "feedback-line no";
+      missed.push({item: item, your: currentShuffled[i]});
+    }
+    recordStat(item, wasCorrect);
+    scoreLive.textContent = "Score: " + score;
+    setTimeout(nextQuestion, 1500);
+  }
+
+  function handleTimeout(){
+    answered = true;
+    var item = deck[idx];
+    var btns = lockButtons();
+    btns[currentCorrectIdx].classList.add('correct');
+    btns.forEach(function(b, bi){
+      if (bi !== currentCorrectIdx) b.classList.add('dim');
+    });
+    feedbackLine.textContent = "⏱ Time's up — correct answer highlighted";
+    feedbackLine.className = "feedback-line no";
+    missed.push({item: item, your: "No answer (timed out)"});
+    recordStat(item, false);
+    setTimeout(nextQuestion, 1500);
+  }
+
+  function nextQuestion(){
+    idx += 1;
+    if (idx >= deck.length) {
+      showResults();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function showResults(){
+    quizScreen.classList.add('hidden');
+    resultsScreen.classList.remove('hidden');
+
+    var heroLabel = document.getElementById('heroLabel');
+    var finalScore = document.getElementById('finalScore');
+    var finalDenom = document.getElementById('finalDenom');
+    var finalPct = document.getElementById('finalPct');
+    var mastered = FULL_TOTAL - missed.length;
+
+    if (mode === 'full') {
+      heroLabel.textContent = "Prince's final score";
+      finalScore.textContent = score;
+      finalDenom.textContent = "/" + FULL_TOTAL;
+      finalPct.textContent = Math.round((score / FULL_TOTAL) * 100) + "% on the first pass";
+    } else {
+      heroLabel.textContent = "Retry round complete";
+      finalScore.textContent = score;
+      finalDenom.textContent = "/" + deck.length;
+      finalPct.textContent = "Mastered " + mastered + " of " + FULL_TOTAL + " overall";
+    }
+
+    var statsGrid = document.getElementById('statsGrid');
+    statsGrid.innerHTML = "";
+    ["Remember","Understand","Apply","Analyze","Evaluate","Create"].forEach(function(l){
+      var s = levelStats[l];
+      var cell = document.createElement('div');
+      cell.className = "stat-cell";
+      cell.innerHTML = '<div class="lvl" style="color:' + LEVEL_COLOR[l] + '">' + l + '</div><div class="num">' + s.correct + ' / ' + s.total + '</div>';
+      statsGrid.appendChild(cell);
+    });
+
+    var reviewBlock = document.getElementById('reviewBlock');
+    reviewBlock.innerHTML = "";
+    if (missed.length > 0) {
+      var title = document.createElement('div');
+      title.className = "review-title";
+      title.textContent = "Still to master — " + missed.length + " question" + (missed.length === 1 ? "" : "s");
+      reviewBlock.appendChild(title);
+      missed.forEach(function(m){
+        var it = m.item;
+        var row = document.createElement('div');
+        row.className = "review-item";
+        row.innerHTML = '<div class="rt" style="color:' + LEVEL_COLOR[it.l] + '">' + it.l + ' · ' + escapeHtml(it.t) + '</div>' +
+          '<div class="rq">' + escapeHtml(it.q) + '</div>' +
+          '<div class="ra">Correct: ' + escapeHtml(it.o[0]) + '</div>';
+        reviewBlock.appendChild(row);
+      });
+    } else {
+      var perfect = document.createElement('div');
+      perfect.style.textAlign = "center";
+      perfect.style.color = "var(--correct)";
+      perfect.style.fontWeight = "800";
+      perfect.style.margin = "10px 0";
+      perfect.textContent = "🎉 All " + FULL_TOTAL + " mastered — nothing left to retry.";
+      reviewBlock.appendChild(perfect);
+    }
+
+    var actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = "";
+    if (missed.length > 0) {
+      var retryBtn = document.createElement('button');
+      retryBtn.className = "retry-btn";
+      retryBtn.textContent = "Retry These " + missed.length + " Question" + (missed.length === 1 ? "" : "s");
+      retryBtn.addEventListener('click', retryMissed);
+      actionButtons.appendChild(retryBtn);
+    }
+    var restartBtn = document.createElement('button');
+    restartBtn.className = "ghost-btn";
+    restartBtn.textContent = "Start a Fresh Quiz";
+    restartBtn.addEventListener('click', backToStart);
+    actionButtons.appendChild(restartBtn);
+  }
+
+  function retryMissed(){
+    var subset = missed.map(function(m){ return m.item; });
+    missed = [];
+    mode = 'retry';
+    deck = shuffle(subset);
+    idx = 0; score = 0;
+    resultsScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
+  }
+
+  function backToStart(){
+    resultsScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+  }
+
+  function startQuiz(){
+    mode = 'full';
+    deck = shuffle(QUESTIONS);
+    resetFullState();
+    startScreen.classList.add('hidden');
+    resultsScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
+  }
+
+  startBtn.addEventListener('click', startQuiz);
+})();
+</script>
+</body>
+</html>
